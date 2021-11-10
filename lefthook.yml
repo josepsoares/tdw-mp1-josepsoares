@@ -1,0 +1,26 @@
+pre-push:
+  commands:
+    linter:
+      exclude: 'node_modules/*'
+      run: yarn lint
+    format:
+      glob: '*.{js,jsx,ts,tsx}'
+      exclude: 'node_modules/*'
+      run: yarn format
+    tests:
+      exclude: 'node_modules/*'
+      run: yarn test
+
+pre-commit:
+  parallel: true
+  commands:
+    linter:
+      exclude: 'node_modules/*'
+      run: yarn lint
+    format:
+      glob: '*.{js,jsx,ts,tsx}'
+      exclude: 'node_modules/*'
+      run: yarn format
+    tests:
+      exclude: 'node_modules/*'
+      run: yarn test
