@@ -1,3 +1,5 @@
+name: cron-action
+
 # Controls when the workflow will run
 on:
   # Triggers the workflow every weekend

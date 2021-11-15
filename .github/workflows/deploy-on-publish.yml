@@ -1,4 +1,4 @@
-name: deploy-on-publish
+name: deploy-on-publish-action
 
 # Controls when the workflow will run
 on:
