@@ -1,4 +1,4 @@
-name: CI Workflow
+name: dev
 
 on:
   # Triggers the workflow on push in a branch that isnt master
@@ -11,7 +11,7 @@ on:
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
 
     # Sequence of tasks that make the job
     steps:
@@ -46,7 +46,7 @@ jobs:
 
       # Task to test project code with Jest
       - name: Testing with jest
-      - run: |
+        run: |
           echo Testing with jest and getting coverage...
           yarn test
           echo Testing finished
