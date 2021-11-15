@@ -7,6 +7,9 @@ on:
     # Runs in the weekend
     - cron: '0 0 * * 6,0'
 
+  # Allows to run this workflow manually
+  workflow_dispatch:
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   cron-check:
@@ -52,7 +55,6 @@ jobs:
           echo Testing finished
 
       - name: build-deploy
-        if: contains( github.ref, 'master')
         env:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
