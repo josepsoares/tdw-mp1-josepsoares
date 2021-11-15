@@ -1,3 +1,5 @@
+name: deploy-on-publish
+
 # Controls when the workflow will run
 on:
   # Triggers the workflow on contentful publish new post
@@ -40,7 +42,7 @@ jobs:
 
       # Task to test project code with Jest
       - name: Testing with jest
-      - run: |
+        run: |
           echo Testing with jest and getting coverage...
           yarn test
           echo Testing finished
