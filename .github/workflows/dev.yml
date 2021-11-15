@@ -1,4 +1,4 @@
-name: dev
+name: dev-action
 
 on:
   # Triggers the workflow on push in a branch that isnt master
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  ci:
+  dev-branch-push-check:
     runs-on: ubuntu-18.04
 
     # Sequence of tasks that make the job
