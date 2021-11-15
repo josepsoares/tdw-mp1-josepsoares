@@ -1,0 +1,52 @@
+name: CI Workflow
+
+on:
+  # Triggers the workflow on push in a branch that isnt master
+  push:
+    branches-ignore:
+      - master
+
+  # Allows to run this workflow manually
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    # Sequence of tasks that make the job
+    steps:
+      # Getting node.js and cache yarn and stuff
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      # Installing dependecies with yarn
+      - name: Install dependecies
+        run: |
+          echo Installing things...
+          yarn install --prefer-offline
+          echo Instalation finished
+
+      # Task to format project code with Prettier
+      - name: Formatting
+        run: |
+          echo Formatting...
+          yarn format
+          echo Formatting finished
+
+      # Task to verify project code with Eslint
+      - name: Linting with eslint
+        run: |
+          echo Linting...
+          yarn lint
+          echo Linting finished
+
+      # Task to test project code with Jest
+      - name: Testing with jest
+      - run: |
+          echo Testing with jest and getting coverage...
+          yarn test
+          echo Testing finished

@@ -1,0 +1,88 @@
+name: CI Workflow
+
+on:
+  # Triggers the workflow on push or pull request events but only for the $default-branch branch
+  push:
+    branches: [$default-branch]
+  pull_request:
+    branches: [$default-branch]
+
+  # Allows to run this workflow manually
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    # Sequence of tasks that make the job
+    steps:
+      # Getting node.js and cache yarn and stuff
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+
+      # Installing dependecies with yarn
+      - name: Install dependecies
+        run: |
+          echo Installing things...
+          yarn install --prefer-offline
+          echo Instalation finished
+
+      # Task to format project code with Prettier
+      - name: Formatting
+        run: |
+          echo Formatting...
+          yarn format
+          echo Formatting finished
+
+      # Task to verify project code with Eslint
+      - name: Linting with eslint
+        run: |
+          echo Linting...
+          yarn lint
+          echo Linting finished
+
+      # Task to test project code with Jest
+      - name: Testing with jest
+      - run: |
+          echo Testing with jest and getting coverage...
+          yarn test
+          echo Testing finished
+
+      # Task to publish code coverage badge
+      #- name: Publish cod cov badge
+      #  run: |
+      #    total=`go tool cover -func=coverage.out | grep total | grep -Eo '[0-9]+\.[0-9]+'`
+      #    if (( $(echo "$total <= 50" | bc -l) )) ; then
+      #      COLOR=red
+      #    elif (( $(echo "$total > 80" | bc -l) )); then
+      #      COLOR=green
+      #    else
+      #      COLOR=orange
+      #    fi
+      #    curl "https://img.shields.io/badge/coavrege-$total%25-$COLOR" > badge.svg
+      #    gsutil  -h "Cache-Control: no-cache" cp badge.svg gs://${SOME_BUCKET}/${PROJECT_NAME}/codcov.svg
+      #    gsutil acl ch -u AllUsers:R gs://${SOME_BUCKET}/${PROJECT_NAME}/codcov.svg
+      #  env:
+      #    SOME_BUCKET: ${{ secrets.ORG_NAME }}
+      #    PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+
+      - name: build-deploy
+        if: contains( github.ref, 'master')
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
+          CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN }}
+        run: |
+          echo Building...
+          export CONTENTFUL_SPACE_ID=$CONTENTFUL_SPACE_ID
+          export CONTENTFUL_ACCESS_TOKEN=$CONTENTFUL_ACCESS_TOKEN
+          yarn build
+          echo Building finished
+          echo Deploying to netlify...
+          npx netlify-cli deploy --site "$NETLIFY_SITE_ID" --auth "$NETLIFY_AUTH_TOKEN" --prod
+          echo Deploying finished! Now the website has the new contentful post
