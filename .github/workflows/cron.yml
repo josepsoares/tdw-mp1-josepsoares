@@ -1,49 +1,67 @@
 # Controls when the workflow will run
-# on:
-# Triggers the workflow every weekend
-# schedule:
-# Runs in the weekend
-# - cron: '0 0 * * 6,0'
+on:
+  # Triggers the workflow every weekend
+  schedule:
+    # Runs in the weekend
+    - cron: '0 0 * * 6,0'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-#jobs:
-#  cron-check:
-#    runs-on: ubuntu-latest
-#
-# Sequence of tasks that make the job
-#    steps:
-# Getting node.js and cache yarn and stuff
-#      - uses: actions/checkout@v2
-#      - uses: actions/setup-node@v2
-#        with:
-#          node-version: '16'
-#          cache: 'yarn'
-#          cache-dependency-path: '**/yarn.lock'
+jobs:
+  cron-check:
+    runs-on:
+      ubuntu-latest
 
-# Installing dependecies with yarn
-#      - name: Install dependecies
-#        run: |
-#          echo Installing things...
-#          yarn install
-#          echo Instalation finished
+      # Sequence of tasks that make the job
+    steps:
+      # Getting node.js and cache yarn and stuff
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
 
-# Task to format project code with Prettier
-#      - name: Formatting
-#        run: |
-#          echo Formatting...
-#          yarn format
-#          echo Formatting finished
+      # Installing dependecies with yarn
+      - name: Install dependecies
+        run: |
+          echo Installing things...
+          yarn install
+          echo Instalation finished
 
-# Task to verify project code with Eslint
-#      - name: Linting with eslint
-#        run: |
-#          echo Linting...
-#          yarn lint
-#          echo Linting finished
+      # Task to format project code with Prettier
+      - name: Formatting
+        run: |
+          echo Formatting...
+          yarn format
+          echo Formatting finished
 
-# Task to test project code with Jest
-#      - name: Testing with jest
-#      - run: |
-#          echo Testing with jest and getting coverage...
-#          yarn test
-#          echo Testing finished
+      # Task to verify project code with Eslint
+      - name: Linting with eslint
+        run: |
+          echo Linting...
+          yarn lint
+          echo Linting finished
+
+      # Task to test project code with Jest
+      - name: Testing with jest
+        run: |
+          echo Testing with jest and getting coverage...
+          yarn test
+          echo Testing finished
+
+      - name: build-deploy
+        if: contains( github.ref, 'master')
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
+          CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN }}
+        run: |
+          echo Building...
+          export CONTENTFUL_SPACE_ID=$CONTENTFUL_SPACE_ID
+          export CONTENTFUL_ACCESS_TOKEN=$CONTENTFUL_ACCESS_TOKEN
+          yarn build
+          echo Building finished
+          echo Deploying to netlify...
+          npx netlify-cli deploy --site "$NETLIFY_SITE_ID" --auth "$NETLIFY_AUTH_TOKEN" --prod
+          echo Deploying finished! Now the website has the new contentful post
