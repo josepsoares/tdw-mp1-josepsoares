@@ -5,7 +5,7 @@ on:
   # Triggers the workflow every weekend
   schedule:
     # Runs in the weekend
-    - cron: '0 0 * * 6,0'
+    - cron: '0 0 * * 1-5'
 
   # Allows to run this workflow manually
   workflow_dispatch:
