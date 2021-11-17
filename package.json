@@ -48,7 +48,7 @@
     "clean": "gatsby clean",
     "setup": "node ./bin/setup.js",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "test": "jest --config ./jest.config.js --collectCoverage --coverageDirectory=\"./coverage\" --ci --reporters=default --reporters=jest-junit --watchAll=false --u",
+    "test": "jest --config ./jest.config.js --collectCoverage --coverage --ci --watchAll=false",
     "lint": "npx eslint src/**/*.{js,jsx,ts,tsx} --fix",
     "netlify-cli": "npx netlify-cli"
   }
